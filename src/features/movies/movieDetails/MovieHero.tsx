@@ -1,0 +1,438 @@
+import Stars from "@/components/Stars";
+import formatDate from "@/lib/utils";
+import { backDropUrl } from "@/lib/Variables";
+import type { genres, Movie, Videos } from "@/types/AllTypes";
+import { useState } from "react";
+import { Bookmark, Heart, X } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUser } from "@/features/authentication/useUser";
+import { useAddFavorite } from "@/features/favorites/useAddFavorite";
+import { useIsFavorite } from "@/features/favorites/useIsFavorite";
+import { useRemoveFavorite } from "@/features/favorites/useRemoveFavorite";
+import { useAddWatchlist } from "@/features/watchlist/useAddWatchlist";
+import { useIsWatchlist } from "@/features/watchlist/useIsWatchlist";
+import { useRemoveWatchlist } from "@/features/watchlist/useRemoveWatchlist";
+
+function MovieHero({
+  finalTrailer,
+  movie,
+}: {
+  finalTrailer?: Videos;
+  movie: Movie;
+}) {
+  const { movieId } = useParams<{ movieId: string }>();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useUser();
+  const { addFavorite, isAddFavorite } = useAddFavorite();
+  const { removeFavorite, isRemoveFavorite } = useRemoveFavorite();
+  const { isFavorite } = useIsFavorite({
+    id: Number(movieId),
+    media_type: "movie",
+  });
+  const { addWatchlist, isAddWatchlist } = useAddWatchlist();
+  const { isWatchlist } = useIsWatchlist({
+    id: Number(movieId),
+    media_type: "movie",
+  });
+  const { removeWatchlist, isRemoveWatchlist } = useRemoveWatchlist();
+  const [showModal, setShowModal] = useState(false);
+  const hours = Math.floor(movie.runtime / 60);
+  const minutes = movie.runtime % 60;
+
+  return (
+    <div className="relative min-h-dvh w-full overflow-hidden">
+      
+      <img
+        src={`${backDropUrl}${movie.backdrop_path}`}
+        alt={movie.title}
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover blur-[3px]"
+      />
+
+      
+      <div
+        className="
+          absolute inset-0
+          bg-linear-to-t
+          from-black
+          to-black/20
+        "
+      />
+
+      {showModal && (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center  px-4 ">
+          <div className="relative w-full max-w-5xl overflow-hidden  ">
+            <button onClick={() => setShowModal(false)}>
+              <X className="text-stone-200 absolute right-0 z-9999 -top-1 hover:text-stone-400 cursor-pointer" />
+            </button>
+            <div className="relative aspect-10/9 md:aspect-18/9 w-full">
+              <iframe
+                src={`https://www.youtube.com/embed/${finalTrailer?.key}`}
+                title="TypeScript in React - Full Tutorial"
+                className="absolute inset-0 h-full w-full"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      
+      <div
+        className="
+          relative z-10
+          flex min-h-dvh
+          items-end
+          md:items-center
+        "
+      >
+        <div
+          className="
+            grid
+            w-full
+            max-w-330
+            grid-cols-1
+            items-center
+            gap-10
+            px-4
+            pt-20
+            pb-12
+            md:gap-12
+            md:px-6
+            md:pt-24
+            md:pb-16
+            lg:grid-cols-[520px_minmax(0,1fr)]
+            lg:gap-0
+            lg:px-0
+            lg:pt-20
+            lg:pb-12
+          "
+        >
+          
+          <div className="flex justify-center lg:justify-end">
+            <img
+              src={`${backDropUrl}${movie.poster_path}`}
+              alt={movie.title}
+              decoding="async"
+              className="
+                h-72
+                w-48
+                rounded-2xl
+                object-cover
+                shadow-2xl
+                ring-1
+                ring-white/10
+                transition-transform
+                duration-300
+                hover:scale-105
+
+                sm:h-80
+                sm:w-53
+
+                md:h-105
+                md:w-70
+
+                lg:h-130
+                lg:w-auto
+              "
+            />
+          </div>
+
+          
+          <div
+            className="
+              w-full
+              px-2
+              pb-6
+              text-center
+
+              sm:px-6
+
+              md:ml-10
+              md:max-w-2xl
+              md:px-0
+              md:pb-0
+              md:text-center
+
+              lg:ml-16
+              lg:text-start
+            "
+          >
+            
+            <h1
+              className="
+                font-bebas
+                whitespace-normal
+                text-4xl
+                font-bold
+                leading-none
+                tracking-[-0.001em]
+                text-white
+
+                sm:text-5xl
+
+                md:text-6xl
+
+                lg:text-7xl
+                lg:whitespace-nowrap
+              "
+            >
+              {movie.title}
+            </h1>
+
+            
+            <div
+              className="
+                mt-4
+                flex
+                flex-wrap
+                justify-center
+                gap-3
+                item-center
+                sm:gap-3
+
+                lg:justify-start
+              "
+            >
+              <span className="carousal-inf flex justify-center items-center">
+                {formatDate(movie.release_date) || "N/A"}
+              </span>
+
+              <span className="carousal-inf flex justify-center items-center">
+                {hours === 0 && minutes === 0
+                  ? "N/A"
+                  : `${hours > 0 ? `${hours}h ` : ""}${minutes > 0 ? `${minutes}m` : ""}`}
+              </span>
+
+              <span className=" carousal-inf  flex justify-center items-center">
+                {movie.vote_average.toFixed(1)}/10
+                <Stars vote_average={movie.vote_average} size={17} />
+              </span>
+            </div>
+
+            
+            <div
+              className="
+                lg:mt-4
+                mt-6
+                flex-wrap
+                justify-center
+                lg:gap-2
+                pb-2
+                lg:pb-0
+                flex
+                lg:justify-start
+                gap-3
+              "
+            >
+              {movie.genres.map((genre: genres) => (
+                <span key={genre.id} className="carousal-inf border-stone-300">
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+
+            
+            <div className="mt-5 md:mt-7">
+              <h2
+                className="
+                  font-bebas
+                  text-2xl
+                  tracking-wide
+                  text-red-600
+
+                  sm:text-3xl
+                "
+              >
+                OVERVIEW
+              </h2>
+
+              <p
+                className="
+                  mx-auto
+                  mt-2
+                  max-w-lg
+                  line-clamp-4
+                  font-roboto
+                  text-sm
+                  font-semibold
+                  leading-6
+                  text-white/90
+
+                  sm:text-base
+
+                  md:mt-3
+                  md:text-lg
+                  md:leading-7
+                  md:line-clamp-none
+
+                  lg:mx-0
+                "
+              >
+                {movie.overview}
+              </p>
+            </div>
+
+            
+            <div
+              className="
+                mt-5
+                flex
+                whitespace-nowrap
+                flex-wrap
+                justify-center
+                gap-3
+                sm:gap-4
+                lg:justify-start
+              "
+            >
+              <button
+                type="button"
+                disabled={isAddWatchlist || isRemoveWatchlist}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    navigate("/login");
+                    return;
+                  }
+                  if (!isWatchlist) {
+                    addWatchlist({ id: Number(movieId), media_type: "movie" });
+                  } else {
+                    removeWatchlist({
+                      id: Number(movieId),
+                      media_type: "movie",
+                    });
+                  }
+                }}
+                className="
+                  group
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-full
+                  border
+                  border-white/20
+                  bg-white/5
+                  px-5
+                  py-2.5
+                  font-roboto
+                  text-sm
+                  font-bold
+                  text-white
+                  backdrop-blur-sm
+                  transition-all
+                  hover:border-red-600
+                  hover:bg-red-700
+                  sm:px-6
+                  cursor-pointer
+                  sm:py-3
+                  sm:text-base
+                  "
+              >
+                <Bookmark
+                  size={18}
+                  strokeWidth={2.5}
+                  className={`transition-transform duration-300 group-hover:text-yellow-400 group-hover:fill-yellow-400
+                    ${isWatchlist && "text-yellow-400 fill-yellow-400"}`}
+                />
+                <span>
+                  {isWatchlist ? "Remove from watchlist" : "Add to Watchlist"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                disabled={isAddFavorite || isRemoveFavorite}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    navigate("/login");
+                    return;
+                  }
+                  if (!isFavorite) {
+                    addFavorite({ id: Number(movieId), media_type: "movie" });
+                  } else {
+                    removeFavorite({
+                      id: Number(movieId),
+                      media_type: "movie",
+                    });
+                  }
+                }}
+                className={`
+                  group
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-full
+                  border
+                  border-white/20
+                  bg-white/5
+                  px-5
+                  py-2.5
+                  font-roboto
+                  text-sm
+                  font-bold
+                  text-white
+                  backdrop-blur-sm
+                  transition-all
+                  duration-300
+                  cursor-pointer
+                  hover:bg-white
+                  hover:text-black
+                  sm:px-6
+                  sm:py-3
+                  sm:text-base
+                `}
+              >
+                <Heart
+                  size={18}
+                  strokeWidth={2.5}
+                  className={`transition-transform duration-300 group-hover:fill-red-600 group-hover:stroke-red-600
+                    ${isFavorite && "fill-red-600 stroke-red-600"}
+                    `}
+                />
+                <span>
+                  {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                </span>
+              </button>
+            </div>
+
+            
+            <div className="mt-6 flex flex-wrap justify-center gap-3 sm:gap-4 lg:justify-start">
+              {finalTrailer && (
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="
+                  cursor-pointer
+                  rounded-full
+                  bg-red-600
+                  px-6
+                  py-2.5
+                  font-roboto
+                  text-sm
+                  font-bold
+                  text-white
+                  transition-all
+                  duration-300
+                  hover:bg-red-800
+
+                  sm:px-8
+                  sm:py-3
+                  sm:text-base
+                "
+                >
+                  ▶&nbsp; Watch Trailer
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default MovieHero;
