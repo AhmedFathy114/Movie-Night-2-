@@ -5,7 +5,7 @@
 # 🎬 Movie Night
 A modern, cinematic movie and TV discovery platform built with React, Vite, TypeScript, and Supabase.
 
-[![LIVE DEMO](https://img.shields.io/badge/LIVE_DEMO-CLICK_HERE-2ea44f?style=for-the-badge)](https://movie-night-11.vercel.app/home)
+[![LIVE DEMO](https://img.shields.io/badge/LIVE_DEMO-CLICK_HERE-2ea44f?style=for-the-badge)](https://movie-night-2-three.vercel.app/home)
 
 </div>
 
@@ -373,7 +373,7 @@ Experience Movie Night online:
 
 <div align="center">
 
-[![Open Movie Night](https://img.shields.io/badge/🎬_OPEN_MOVIE_NIGHT-2ea44f?style=for-the-badge)](https://movie-night-11.vercel.app/home)
+[![Open Movie Night](https://img.shields.io/badge/🎬_OPEN_MOVIE_NIGHT-2ea44f?style=for-the-badge)](https://movie-night-2-three.vercel.app/home)
 
 </div>
 
